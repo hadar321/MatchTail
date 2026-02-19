@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PostsList } from "./posts/posts-list";
+import { Header } from "./home/header";
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
@@ -11,7 +12,7 @@ const theme = createTheme({
 const App: React.FC = () => {
   return (
     <MantineProvider theme={theme}>
-      <h1>MatchTail</h1>
+      <Header />
       <Router>
         <Routes>
           <Route path="/postsList" element={<PostsList />}></Route>
