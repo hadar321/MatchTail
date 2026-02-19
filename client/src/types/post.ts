@@ -1,7 +1,7 @@
 interface Post {
     id: string;
     userId: string;
-    animalId: string;
+    animal: string;
     content: string;
     imageUrl: string;
     lastUpdated: Date;

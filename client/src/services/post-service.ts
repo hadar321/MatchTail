@@ -6,7 +6,15 @@ const fetchPosts = (): Post[] => {
       id: "1",
       userId: "1",
       content: "This is a sample post.",
-      animalId: "1",
+      animal: "cat",
+      imageUrl: "",
+      lastUpdated: new Date(),
+    });
+    posts.push({
+      id: "2",
+      userId: "2",
+      content: "This is another sample post.",
+      animal: "dog",
       imageUrl: "",
       lastUpdated: new Date(),
     });
