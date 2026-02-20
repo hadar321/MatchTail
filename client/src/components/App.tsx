@@ -11,7 +11,7 @@ const theme = createTheme({
   defaultRadius: "md",
 });
 
-const backgroundStyle = {
+const backgroundStyle: React.CSSProperties = {
   minHeight: "100vh",
   width: "100%",
   background: "linear-gradient(180deg, #FFEDD5 0%, #FFF7ED 25%, #FFFFFF 100%)",
