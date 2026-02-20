@@ -11,6 +11,10 @@ const LoginForm: React.FC = () => {
     initialValues: {
       email: "",
       password: "",
+      },
+    validate: {
+      email: (value) => (value.trim() ? null : "Email is required"),
+      password: (value) => (value.trim() ? null : "Password is required"),
     },
   });
     
