@@ -2,27 +2,23 @@ import { useForm } from "@mantine/form";
 import { Button, Card, Stack, TextInput } from "@mantine/core";
 import { orange } from "../../consts"; 
 import { Group } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
       email: "",
       password: "",
     },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value)
-          ? null
-          : "Password must contain at least 8 characters, upper and lower case letters, numbers and special characters",
-    },
   });
     
-  const handleSubmit = (values: { email: string; password: string }) => {
-    console.log(form.errors);
-      console.log(values);
-  };
+    const handleSubmit = (values: { email: string; password: string }) => {
+        console.log(form.errors);
+        console.log(values);
+        navigate("/postsList");
+    };
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -45,7 +41,7 @@ const LoginForm: React.FC = () => {
           <Button type="submit">Log In</Button>
            <Card.Section withBorder inheritPadding>
             <Group justify="center" mt={"sm"} mb={"sm"}>
-              <Button type="button" color={orange}>
+              <Button type="button" color={orange} onClick={() => navigate("/signup")}>
                 Sign Up
               </Button>
             </Group>
