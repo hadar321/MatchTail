@@ -1,5 +1,7 @@
 import { useForm } from "@mantine/form";
 import { Button, Card, Stack, TextInput } from "@mantine/core";
+import { orange } from "../../consts"; 
+import { Group } from "@mantine/core";
 
 const LoginForm: React.FC = () => {
   const form = useForm({
@@ -16,10 +18,10 @@ const LoginForm: React.FC = () => {
           : "Password must contain at least 8 characters, upper and lower case letters, numbers and special characters",
     },
   });
-
+    
   const handleSubmit = (values: { email: string; password: string }) => {
     console.log(form.errors);
-    console.log(values);
+      console.log(values);
   };
 
   return (
@@ -41,6 +43,13 @@ const LoginForm: React.FC = () => {
             error={form.errors.password}
           />
           <Button type="submit">Log In</Button>
+           <Card.Section withBorder inheritPadding>
+            <Group justify="center" mt={"sm"} mb={"sm"}>
+              <Button type="button" color={orange}>
+                Sign Up
+              </Button>
+            </Group>
+          </Card.Section>
         </Stack>
       </form>
     </Card>

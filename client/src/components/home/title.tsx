@@ -1,6 +1,6 @@
 import { Title } from "@mantine/core";
 
-import { pawOrange , pawOrangeDark } from "../../consts";
+import { orange , orangeDark } from "../../consts";
 
 const AppTitle: React.FC = () => {
   return (
@@ -15,13 +15,13 @@ const AppTitle: React.FC = () => {
         fontFamily: "'Fredoka', sans-serif", // גופן מעוגל מומלץ (אם מותקן)
         letterSpacing: "-2px",
         textShadow: `
-          2px 2px 0px ${pawOrange},
-          4px 4px 0px ${pawOrangeDark},
+          2px 2px 0px ${orange},
+          4px 4px 0px ${orangeDark},
           6px 6px 15px rgba(0, 0, 0, 0.1)
         `,
       }}
     >
-      Match<span style={{ color: pawOrange }}>Tail</span>
+      Match<span style={{ color: orange }}>Tail</span>
     </Title>
   );
 };

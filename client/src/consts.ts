@@ -6,7 +6,7 @@ const orangeDark = "#C2410C";
 const serverBaseUrl = "http://localhost:3000";
 const apiKey = "AIzaSyA3prU4IY-EfcCkeX2O7eNucXkmTJtUIwc";
 
-export { gray as pawGray, menuColor, orange as pawOrange, orangeDark as pawOrangeDark, serverBaseUrl, apiKey };
+export { gray , menuColor, orange, orangeDark , serverBaseUrl, apiKey };
 
 
 const homePageTitle = "MatchTail";
