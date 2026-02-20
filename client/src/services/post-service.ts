@@ -9,6 +9,7 @@ const fetchPosts = (): Post[] => {
       animal: "cat",
       imageUrl: "",
       lastUpdated: new Date(),
+      likedBy: ["1"],
     });
     posts.push({
       id: "2",
@@ -17,6 +18,7 @@ const fetchPosts = (): Post[] => {
       animal: "dog",
       imageUrl: "",
       lastUpdated: new Date(),
+      likedBy: [],
     });
   return posts;
 };
