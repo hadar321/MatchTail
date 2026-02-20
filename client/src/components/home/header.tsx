@@ -9,8 +9,7 @@ const Header: React.FC = () => {
             <AppTitle />
             <Image
               h={170}
-              src={"/logo.jpg"}
-              style={{ transform: "rotate(15deg)" }}
+              src={"/logo.png"}
             ></Image>
           </Flex>
         </Flex>
