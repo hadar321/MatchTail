@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { User } from "../../types/user";
 
 
-const Post: React.FC<PostType> = ({ userId, imageUrl, content, likedBy }) => {
+const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Post: React.FC<PostType> = ({ userId, imageUrl, content, likedBy }) => {
           <Text px={"md"}>{content}</Text>
         </Card.Section> */}
         <Card.Section>
-          <PostFooter userId={userId} likedBy={likedBy} />
+          <PostFooter id={id} userId={userId} likedBy={likedBy} username={user.username} />
         </Card.Section>
         <Flex align={"center"} gap={"sm"} px={"sm"}>
           <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
