@@ -1,17 +1,46 @@
-import { Modal, ThemeIcon } from "@mantine/core";
+import { Modal, ThemeIcon, Indicator } from "@mantine/core";
 import { Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMessageCircle, IconPawFilled } from "@tabler/icons-react";
 
 import { Post } from "../../types/post";
 import { gray, orange } from "../../consts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CommentsList } from "./comments/comments-list";
 
 const PostFooter: React.FC<Pick<Post, "id" | "userId" | "likedBy"> & { username: string }> =
     ({ id, userId, likedBy, username }) => {
         const [isLiked, setIsLiked] = useState<boolean>(likedBy.includes(userId));
         const [commentsOpened, { open, close }] = useDisclosure(false);
+        const [commentsCount, setCommentsCount] = useState<number>(0);
+
+        useEffect(() => {
+          let mounted = true;
+          const loadCount = async () => {
+            try {
+            //   let res = await fetch(`/api/posts/${id}/comments/count`);
+            //   if (res.ok) {
+            //     const json = await res.json();
+            //     const count = typeof json === "number" ? json : json?.count;
+            //     if (mounted && typeof count === "number") setCommentsCount(count);
+            //     return;
+            //   }
+              const res = await fetch(`/api/posts/${id}/comments`);
+              if (res.ok) {
+                const arr = await res.json();
+                if (mounted && Array.isArray(arr)) setCommentsCount(arr.length);
+                }
+               else {
+                setCommentsCount(0);
+               }
+            } catch (e) {
+              // ignore fetch errors
+              console.error(e);
+            }
+          };
+          loadCount();
+          return () => { mounted = false; };
+        }, [id]);
 
   const handlePawClick = () => {
     setIsLiked((isLiked) => !isLiked);
@@ -28,14 +57,16 @@ const PostFooter: React.FC<Pick<Post, "id" | "userId" | "likedBy"> & { username:
                 cursor={"pointer"}
                 color={isLiked ? orange : gray} />
         </ThemeIcon>
-        <ThemeIcon variant={"white"} size={60}>
-            <IconMessageCircle
-                stroke={1.5}
-                color={orange}
-                cursor={"pointer"}
-                onClick={open}
-                style={{ height: "70%", width: "70%" }}/>
-        </ThemeIcon>
+        <Indicator label={commentsCount} size={18} color="orange" offset={-6}>
+          <ThemeIcon variant={"white"} size={60}>
+              <IconMessageCircle
+                  stroke={1.5}
+                  color={orange}
+                  cursor={"pointer"}
+                  onClick={open}
+                  style={{ height: "70%", width: "70%" }}/>
+          </ThemeIcon>
+        </Indicator>
         <Modal opened={commentsOpened} onClose={close}>
           <CommentsList postId={id} username={username} />
         </Modal>
