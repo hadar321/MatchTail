@@ -7,6 +7,7 @@ import { Post } from "../../types/post";
 import { gray, orange } from "../../consts";
 import { useState, useEffect } from "react";
 import { CommentsList } from "./comments/comments-list";
+import { getCommentsByPostId } from "../../services/comment-service";
 
 const PostFooter: React.FC<Pick<Post, "id" | "userId" | "likedBy"> & { username: string }> =
     ({ id, userId, likedBy, username }) => {
@@ -14,33 +15,9 @@ const PostFooter: React.FC<Pick<Post, "id" | "userId" | "likedBy"> & { username:
         const [commentsOpened, { open, close }] = useDisclosure(false);
         const [commentsCount, setCommentsCount] = useState<number>(0);
 
-        useEffect(() => {
-          let mounted = true;
-          const loadCount = async () => {
-            try {
-            //   let res = await fetch(`/api/posts/${id}/comments/count`);
-            //   if (res.ok) {
-            //     const json = await res.json();
-            //     const count = typeof json === "number" ? json : json?.count;
-            //     if (mounted && typeof count === "number") setCommentsCount(count);
-            //     return;
-            //   }
-              const res = await fetch(`/api/posts/${id}/comments`);
-              if (res.ok) {
-                const arr = await res.json();
-                if (mounted && Array.isArray(arr)) setCommentsCount(arr.length);
-                }
-               else {
-                setCommentsCount(0);
-               }
-            } catch (e) {
-              // ignore fetch errors
-              console.error(e);
-            }
-          };
-          loadCount();
-          return () => { mounted = false; };
-        }, [id]);
+    useEffect(() => {
+        setCommentsCount(getCommentsByPostId(id).length);
+    }, [id]);
 
   const handlePawClick = () => {
     setIsLiked((isLiked) => !isLiked);
