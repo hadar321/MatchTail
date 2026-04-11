@@ -5,6 +5,7 @@ interface Post {
     content: string;
     imageUrl: string;
     lastUpdated: Date;
+    likedBy: string[];
 }
 
 export type { Post };

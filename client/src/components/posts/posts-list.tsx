@@ -16,6 +16,7 @@ const PostsList: React.FC = () => {
           animal={post.animal}
           imageUrl={post.imageUrl}
           lastUpdated={post.lastUpdated}
+          likedBy={post.likedBy}
         />
       ))}
     </Stack>

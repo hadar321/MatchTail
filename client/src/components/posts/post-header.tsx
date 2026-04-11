@@ -7,7 +7,7 @@ const PostHeader: React.FC<Pick<User, "username" | "avatarURL">> = ({
   avatarURL,
 }) => {
   return (
-    <Flex align={"center"} h={80} ml={6} gap={6}>
+    <Flex align={"center"} h={80} ml={"sm"} gap={"sm"}>
       <Avatar radius={"xl"} size={60} src={avatarURL} />
       <Text size={"xl"}>{username}</Text>
     </Flex>
