@@ -78,7 +78,7 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
           <Image src={imageUrl} height={500} />
         </Card.Section>
         <Card.Section>
-          <PostFooter id={id} userId={userId} likedBy={likedBy} />
+          <PostFooter id={id} userId={userId} likedBy={likedBy} username={user.username} />
         </Card.Section>
         <Flex align={"center"} gap={"sm"} px={"sm"}>
           <Text style={{ fontWeight: "bold" }}>{user.username}</Text>

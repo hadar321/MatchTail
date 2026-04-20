@@ -43,12 +43,13 @@ const PostsList: React.FC = () => {
           try {
             await createPost({ title, content });
             const data = await fetchPosts();
-            setPosts(data as any);
+            setPosts(data);
             setTitle(""); setContent("");
-          } catch (e: any) {
-            const msg = e?.response?.data || e?.message || "Failed to create post";
+          } catch (e: unknown) {
+            const error = e as { response?: { data?: string; status?: number }; message?: string };
+            const msg = error?.response?.data || error?.message || "Failed to create post";
             alert(msg);
-            if (e?.response?.status === 401) navigate('/');
+            if (error?.response?.status === 401) navigate('/');
           }
         }}>Create Post</Button>
       </div>
