@@ -1,0 +1,47 @@
+import axios from "axios";
+import type { Post as ClientPost } from "../types/post";
+
+const API_BASE = import.meta.env.VITE_API_BASE ?? "";
+
+type BackendPost = { _id: string; title: string; content: string; sender: string };
+
+function mapBackend(b: BackendPost): ClientPost {
+  return {
+    id: b._id,
+    userId: b.sender,
+    animal: "",
+    content: b.content || b.title,
+    imageUrl: "",
+    lastUpdated: new Date(),
+    likedBy: [],
+  };
+}
+
+export async function getPosts(params?: Record<string, string>) {
+  const res = await axios.get<BackendPost[]>(`${API_BASE}/posts`, { params });
+  return res.data.map(mapBackend);
+}
+
+export async function getPostById(id: string) {
+  const res = await axios.get<BackendPost>(`${API_BASE}/posts/${id}`);
+  return mapBackend(res.data);
+}
+
+export async function createPost(payload: { title: string; content: string }) {
+  const res = await axios.post<BackendPost>(`${API_BASE}/posts`, payload, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return mapBackend(res.data);
+}
+
+export async function updatePost(id: string, payload: { title?: string; content?: string }) {
+  const res = await axios.put<BackendPost>(`${API_BASE}/posts/${id}`, payload, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return mapBackend(res.data);
+}
+
+export async function deletePost(id: string) {
+  const res = await axios.delete<BackendPost>(`${API_BASE}/posts/${id}`);
+  return mapBackend(res.data);
+}

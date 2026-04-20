@@ -1,9 +1,9 @@
 interface Comment {
-  id: string;
-  content: string;
-  postId: string;
-  userId: string;
-  timestamp: Date;
+    _id: string;
+    content: string;
+    postId: string;
+    sender: string;
+    timestamp: Date;
 }
 
 export type { Comment };

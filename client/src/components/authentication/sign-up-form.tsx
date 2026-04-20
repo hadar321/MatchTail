@@ -1,5 +1,7 @@
 import { useForm } from "@mantine/form";
 import { Button, Card, FileInput, Stack, TextInput ,Title } from "@mantine/core";
+import { register as apiRegister } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm: React.FC = () => {
   const form = useForm({
@@ -21,10 +23,18 @@ const SignUpForm: React.FC = () => {
     },
   });
 
-  const handleSubmit = (values: { email: string; password: string }) => {
-    console.log(form.errors);
-    console.log(values);
-    };
+  const navigate = useNavigate();
+
+  const handleSubmit = async (values: { email: string; password: string; username: string }) => {
+    try {
+      await apiRegister(values.username, values.email, values.password);
+      alert("Registration successful. Please log in.");
+      navigate("/");
+    } catch (err: any) {
+      const msg = err?.response?.data || err?.message || "Registration failed";
+      alert(msg);
+    }
+  };
     
   const createConfirmPasswordError = () => {
     if (form.getValues().password) {
