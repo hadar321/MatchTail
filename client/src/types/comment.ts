@@ -3,6 +3,7 @@ interface Comment {
     content: string;
     postId: string;
     sender: string;
+    timestamp: Date;
 }
 
 export type { Comment };

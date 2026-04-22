@@ -31,8 +31,9 @@ const LoginForm: React.FC = () => {
           } else {
             alert("Login failed: no token returned");
           }
-        } catch (err: any) {
-          const msg = err?.response?.data || err?.message || "Login failed";
+        } catch (err: unknown) {
+          const error = err as { response?: { data?: string; status?: number }; message?: string };
+          const msg = error?.response?.data || error?.message || "Login failed";
           alert(msg);
         }
     };

@@ -77,18 +77,15 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
         <Card.Section>
           <Image src={imageUrl} height={500} />
         </Card.Section>
-        {/* <Card.Section mt={"sm"}>
-          <Text px={"md"}>{content}</Text>
-        </Card.Section> */}
         <Card.Section>
-          <PostFooter id={id} userId={userId} likedBy={likedBy} />
+          <PostFooter id={id} userId={userId} likedBy={likedBy} username={user.username} />
         </Card.Section>
         <Flex align={"center"} gap={"sm"} px={"sm"}>
           <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
           <Text>{content}</Text>
         </Flex>
         <div style={{ padding: 12 }}>
-          <Text weight={700}>Comments ({comments.length})</Text>
+          <Text fw={700}>Comments ({comments.length})</Text>
           {comments.slice(0, 3).map((c) => (
             <div key={c._id} style={{ marginTop: 8 }}>
               <Text size="sm"><strong>{c.sender}</strong>: {c.content}</Text>
