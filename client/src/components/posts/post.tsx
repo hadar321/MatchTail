@@ -13,6 +13,8 @@ import type { Comment } from "../../types/comment";
 const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) => {
   const [user, setUser] = useState<User>();
   const [comments, setComments] = useState<Comment[]>([]);
+  const [commentUsernames, setCommentUsernames] = useState<Record<string, string>>({});
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -49,14 +51,51 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
     };
   }, [id]);
 
-  const [newComment, setNewComment] = useState("");
+  useEffect(() => {
+    let mounted = true;
+    async function loadCommentUsernames() {
+      const ids = Array.from(new Set(comments.map((c) => c.sender).filter(Boolean)));
+      const missing = ids.filter((id) => !commentUsernames[id]);
+      if (missing.length === 0) return;
+      try {
+        const results = await Promise.all(
+          missing.map((id) => getUserById(id).catch(() => undefined))
+        );
+        if (!mounted) return;
+        setCommentUsernames((prev) => {
+          const next = { ...prev };
+          missing.forEach((id, idx) => {
+            const u = results[idx];
+            next[id] = u ? u.username : id;
+          });
+          return next;
+        });
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load comment senders", e);
+      }
+    }
+    loadCommentUsernames();
+    return () => {
+      mounted = false;
+    };
+  }, [comments]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !id) return;
     try {
-      await createComment({ content: newComment.trim(), postId: id });
-      const data = await getComments({ postId: id });
-      setComments(data);
+      const created = await createComment({ content: newComment.trim(), postId: id });
+      setComments((prev) => [...prev, created]);
+      // ensure we have the sender username cached
+      const senderId = created.sender;
+      if (senderId && !commentUsernames[senderId]) {
+        try {
+          const u = await getUserById(senderId);
+          setCommentUsernames((prev) => ({ ...prev, [senderId]: u ? u.username : senderId }));
+        } catch (_) {
+          setCommentUsernames((prev) => ({ ...prev, [senderId]: senderId }));
+        }
+      }
       setNewComment("");
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -64,6 +103,8 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
       alert("Failed to add comment");
     }
   };
+
+  
 
   return (
      !isNil(user) && (
@@ -86,9 +127,9 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
         </Flex>
         <div style={{ padding: 12 }}>
           <Text fw={700}>Comments ({comments.length})</Text>
-          {comments.slice(0, 3).map((c) => (
+          {comments.map((c) => (
             <div key={c._id} style={{ marginTop: 8 }}>
-              <Text size="sm"><strong>{c.sender}</strong>: {c.content}</Text>
+              <Text size="sm"><strong>{commentUsernames[c.sender] ?? c.sender}</strong>: {c.content}</Text>
             </div>
           ))}
           <div style={{ marginTop: 12 }}>

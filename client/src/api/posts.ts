@@ -3,7 +3,7 @@ import type { Post as ClientPost } from "../types/post";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "";
 
-type BackendPost = { _id: string; title: string; content: string; sender: string };
+type BackendPost = { _id: string; title: string; content: string; sender: string; likedBy?: string[] };
 
 function mapBackend(b: BackendPost): ClientPost {
   return {
@@ -13,7 +13,7 @@ function mapBackend(b: BackendPost): ClientPost {
     content: b.content || b.title,
     imageUrl: "",
     lastUpdated: new Date(),
-    likedBy: [],
+    likedBy: b.likedBy ?? [],
   };
 }
 
@@ -34,7 +34,10 @@ export async function createPost(payload: { title: string; content: string }) {
   return mapBackend(res.data);
 }
 
-export async function updatePost(id: string, payload: { title?: string; content?: string }) {
+export async function updatePost(
+  id: string,
+  payload: { title?: string; content?: string; likedBy?: string[] }
+) {
   const res = await axios.put<BackendPost>(`${API_BASE}/posts/${id}`, payload, {
     headers: { "Content-Type": "application/json" },
   });

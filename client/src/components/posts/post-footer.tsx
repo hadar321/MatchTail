@@ -1,41 +1,40 @@
-import { Modal, ThemeIcon, Indicator } from "@mantine/core";
+import { ThemeIcon } from "@mantine/core";
 import { Group, Stack } from "@mantine/core";
-import { IconMessageCircle, IconPawFilled } from "@tabler/icons-react";
-import { useDisclosure } from "@mantine/hooks";
+import { IconPawFilled } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 
 import { Post } from "../../types/post";
 import { gray, orange } from "../../consts";
-// import { updatePost } from "../../api/posts";
-import { CommentsList } from "./comments/comments-list";
-import { getCommentsByPostId } from "../../services/comment-service";
+import { updatePost } from "../../api/posts";
 
 type Props = Pick<Post, "id" | "userId" | "likedBy">;
 
-const PostFooter: React.FC<Props & { username: string }> = ({ id, userId, likedBy, username }) => {
+const PostFooter: React.FC<Props> = ({ id, userId, likedBy }) => {
   const [isLiked, setIsLiked] = useState<boolean>(likedBy.includes(userId));
-  const [commentsOpened, { open, close }] = useDisclosure(false);
-  const [commentsCount, setCommentsCount] = useState<number>(0);
+  const [likesCount, setLikesCount] = useState<number>(likedBy.length);
 
   useEffect(() => {
-    setCommentsCount(getCommentsByPostId(id).length);
-  }, [id]);  
+    setLikesCount(likedBy.length);
+    setIsLiked(likedBy.includes(userId));
+  }, [likedBy, userId]);
 
   const handlePawClick = async () => {
     // optimistic toggle locally
     setIsLiked((prev) => !prev);
+    setLikesCount((c) => (isLiked ? c - 1 : c + 1));
     try {
       // attempt to persist like change to backend if supported
-      // const newLikedBy = isLiked
-      //   ? likedBy.filter((u) => u !== userId)
-      //   : [...likedBy, userId];
-      // if (id) {
-      //   await updatePost(id, { likedBy: newLikedBy });
-      // }
+      const newLikedBy = isLiked
+        ? likedBy.filter((u) => u !== userId)
+        : [...likedBy, userId];
+      if (id) {
+        await updatePost(id, { likedBy: newLikedBy });
+      }
     } catch (e) {
       console.error("Failed to update like status on server", e);
       // revert optimistic change on failure
       setIsLiked((prev) => !prev);
+      setLikesCount((c) => (isLiked ? c + 1 : c - 1));
     }
   };
 
@@ -51,19 +50,7 @@ const PostFooter: React.FC<Props & { username: string }> = ({ id, userId, likedB
             color={isLiked ? orange : gray}
           />
         </ThemeIcon>
-        <Indicator label={commentsCount} size={18} color="orange" offset={-6}>
-          <ThemeIcon variant={"white"} size={60}>
-              <IconMessageCircle
-                  stroke={1.5}
-                  color={orange}
-                  cursor={"pointer"}
-                  onClick={open}
-                  style={{ height: "70%", width: "70%" }}/>
-          </ThemeIcon>
-        </Indicator>
-        <Modal opened={commentsOpened} onClose={close}>
-          <CommentsList postId={id} username={username} />
-        </Modal>
+        <div style={{ fontWeight: 700, fontSize: 14 }}>{likesCount}</div>
       </Group>
     </Stack>
   );
