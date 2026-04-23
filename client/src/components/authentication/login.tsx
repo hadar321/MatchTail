@@ -3,6 +3,7 @@ import { Button, Card, Stack, TextInput } from "@mantine/core";
 import { orange } from "../../consts"; 
 import { Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { login as apiLogin } from "../../api/auth";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -18,10 +19,23 @@ const LoginForm: React.FC = () => {
     },
   });
     
-    const handleSubmit = (values: { email: string; password: string }) => {
-        console.log(form.errors);
-        console.log(values);
-        navigate("/postsList");
+    const handleSubmit = async (values: { email: string; password: string }) => {
+        try {
+          const data = await apiLogin(values.email, values.password);
+          // expected { accessToken, refreshToken, _id }
+          if (data && data.accessToken) {
+            localStorage.setItem("token", data.accessToken);
+            if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+            if (data._id) localStorage.setItem("userId", data._id);
+            navigate("/postsList");
+          } else {
+            alert("Login failed: no token returned");
+          }
+        } catch (err: unknown) {
+          const error = err as { response?: { data?: string; status?: number }; message?: string };
+          const msg = error?.response?.data || error?.message || "Login failed";
+          alert(msg);
+        }
     };
 
   return (

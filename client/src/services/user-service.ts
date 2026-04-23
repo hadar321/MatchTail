@@ -1,29 +1,41 @@
+import axios from "axios";
 import { User } from "../types/user";
 
-const getUserById = (userId: string): User => {
-  const user: User = {
-    _id: userId,
-    username: "Hadar",
-    password: "123456",
-    avatarURL: "url",
-    email: "Hdara@gamil.com",
-    lastUpdate: new Date(),
-  };
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
-  return user;
+function authHeader() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+const getUserById = async (userId: string): Promise<User | undefined> => {
+  try {
+    const res = await axios.get<User>(`${API_BASE}/users/${userId}`, { headers: { ...authHeader() } });
+    return res.data;
+  } catch (e) {
+    // fallback sample
+    // eslint-disable-next-line no-console
+    console.warn("getUserById: failed to fetch user", e);
+    return {
+      _id: userId,
+      username: "Unknown",
+      password: "",
+      avatarURL: "",
+      email: "",
+      lastUpdate: new Date(),
+    } as User;
+  }
 };
 
-const getUserByEmail = (email: string): User => {
-  const user: User = {
-    _id: "1",
-    username: "dog_lover",
-    password: "123456",
-    avatarURL: "url",
-    email: email,
-    lastUpdate: new Date(),
-  };
-
-  return user;
+const getUserByEmail = async (email: string): Promise<User | undefined> => {
+  try {
+    const res = await axios.get<User>(`${API_BASE}/users`, { params: { email }, headers: { ...authHeader() } });
+    return res.data;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn("getUserByEmail: failed to fetch user", e);
+    return undefined;
+  }
 };
 
 export { getUserById, getUserByEmail };
