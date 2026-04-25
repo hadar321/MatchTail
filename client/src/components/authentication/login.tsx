@@ -32,8 +32,12 @@ const LoginForm: React.FC = () => {
             alert("Login failed: no token returned");
           }
         } catch (err: unknown) {
-          const error = err as { response?: { data?: string; status?: number }; message?: string };
-          const msg = error?.response?.data || error?.message || "Login failed";
+          const error = err as { response?: { data?: any; status?: number }; message?: string };
+          const resp = error?.response?.data;
+          let msg: string;
+          if (typeof resp === 'string') msg = resp;
+          else if (resp && typeof resp === 'object') msg = resp.message ?? JSON.stringify(resp);
+          else msg = error?.message ?? 'Login failed';
           alert(msg);
         }
     };
