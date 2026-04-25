@@ -7,7 +7,11 @@ import { Post } from "../../types/post";
 import { gray, orange } from "../../consts";
 import { updatePost } from "../../api/posts";
 
-type Props = Pick<Post, "id" | "userId" | "likedBy">;
+type Props = Pick<Post, "id" | "userId" | "likedBy"> & {
+  username?: string;
+  commentCount?: number;
+  setCommentCount?: (count: number) => void;
+};
 
 const PostFooter: React.FC<Props> = ({ id, userId, likedBy }) => {
   const [isLiked, setIsLiked] = useState<boolean>(likedBy.includes(userId));
