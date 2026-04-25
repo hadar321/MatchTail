@@ -33,9 +33,12 @@ const SignUpForm: React.FC = () => {
       alert("Registration successful. Please log in.");
       navigate("/");
     } catch (err: unknown) {
-      console.log("Registration failed", err);
-      const msg = "Registration failed" + (err instanceof Error ? `: ${err.message} ${err.stack} ${err instanceof Error && err.cause ? ` Caused by: ${err.cause}` : ""
-      }` : "") ;
+      const error = err as { response?: { data?: any }; message?: string };
+      const resp = error?.response?.data;
+      let msg: string;
+      if (typeof resp === 'string') msg = resp;
+      else if (resp && typeof resp === 'object') msg = resp.message ?? JSON.stringify(resp);
+      else msg = error?.message ?? 'Registration failed';
       alert(msg);
     }
   };
