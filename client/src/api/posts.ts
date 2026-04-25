@@ -48,3 +48,11 @@ export async function deletePost(id: string) {
   const res = await axios.delete<BackendPost>(`${API_BASE}/posts/${id}`);
   return mapBackend(res.data);
 }
+
+export async function getPostsByUser(userId: string) {
+  return getPosts({ userId });
+}
+
+export async function getPostsBySearch(query: string) {
+  return getPosts({ search: query });
+}

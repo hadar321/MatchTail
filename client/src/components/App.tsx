@@ -10,11 +10,23 @@ import { Profile } from "./profile";
 import { CreatePost } from "./create-post";
 import { IconSearch, IconUser, IconLogout, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
+import { logout } from "../api/auth";
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
   defaultRadius: "md",
 });
+
+const handleLogout = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userId");
+  if (refreshToken) {
+    await logout(refreshToken);
+  }
+  window.location.href = "/";
+}
 
 const backgroundStyle: React.CSSProperties = {
   minHeight: "100vh",
@@ -76,10 +88,10 @@ const AppContent: React.FC = () => {
             />
           </div>
           <Button
-            bottom={1}
             leftSection={<IconLogout size="2rem" />}
-            onClick={() => { navigate('/'); setDrawerOpened(false); }}
+            // onClick={() => { navigate('/'); setDrawerOpened(false); }}
             style={{ marginTop: 'auto' }}
+            onClick={() => { handleLogout(); setDrawerOpened(false); navigate('/'); }}
           >
             Logout
           </Button>

@@ -23,3 +23,11 @@ export async function register(username: string, email: string, password: string
   });
     return res.data;
 }
+
+export async function logout(refreshToken: string) {
+  const payload = { refreshToken };
+  const res = await axios.post(`${API_BASE}/auth/logout`, payload, {
+    headers: { "Content-Type": "application/json" },
+  });
+    return res.data;
+}
