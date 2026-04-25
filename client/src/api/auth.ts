@@ -16,10 +16,15 @@ export async function login(emailOrUsername: string, password: string) {
   return res.data; // expects { accessToken, refreshToken, _id }
 }
 
-export async function register(username: string, email: string, password: string) {
-  const payload = { username, email, password };
+export async function register(username: string, email: string, password: string, avatar?: string) {
+  const payload = { username, email, password, profileImage: avatar };
+  alert("Registering user with payload: " + JSON.stringify(payload));
+  alert(JSON.stringify(payload.profileImage));
   const res = await axios.post(`${API_BASE}/auth/register`, payload, {
     headers: { "Content-Type": "application/json" },
   });
+  alert("Registration successful. Please log in." 
+  + (res.data ? ` Server response: ${JSON.stringify(res.data)}` : ""));
+  
   return res.data;
 }

@@ -88,7 +88,7 @@ const PostsList: React.FC = () => {
         <TextInput placeholder="Content" value={content} onChange={(e) => setContent(e.currentTarget.value)} />
         <Button mt={8} onClick={async () => {
           try {
-            const newPost = await createPost({ title, content });
+            const newPost = await createPost({ title, content ,postImage: ""});
             setPosts(prev => [newPost, ...prev]);
             setTitle("");
             setContent("");
