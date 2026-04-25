@@ -1,9 +1,8 @@
-import { Stack, Button, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { Post } from "./post";
 import { Post as PostType } from "../../types/post";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { createPost, getPosts } from "../../api/posts";
-import { useNavigate } from "react-router-dom";
+import { getPosts } from "../../api/posts";
 
 const POSTS_PER_PAGE = 10;
 
@@ -13,9 +12,6 @@ const PostsList: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
 
   const loadPosts = useCallback(async (pageNum: number, append: boolean = false) => {
@@ -83,23 +79,6 @@ const PostsList: React.FC = () => {
 
   return (
     <Stack justify={"center"} align={"center"}>
-      <div style={{ width: "36vw", marginBottom: 12 }}>
-        <TextInput placeholder="Title" value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
-        <TextInput placeholder="Content" value={content} onChange={(e) => setContent(e.currentTarget.value)} />
-        <Button mt={8} onClick={async () => {
-          try {
-            const newPost = await createPost({ title, content ,postImage: ""});
-            setPosts(prev => [newPost, ...prev]);
-            setTitle("");
-            setContent("");
-          } catch (e: unknown) {
-            const error = e as { response?: { data?: string; status?: number }; message?: string };
-            const msg = error?.response?.data || error?.message || "Failed to create post";
-            alert(msg);
-            if (error?.response?.status === 401) navigate('/');
-          }
-        }}>Create Post</Button>
-      </div>
       {posts.map((post) => (
         <Post
           key={post.id}
