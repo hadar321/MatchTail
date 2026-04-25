@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 
 import { Comment } from "./comment";
 import { Comment as CommentType } from "../../../types/comment";
-import { getCommentsByPostId } from "../../../services/comment-service";
 import { IconSend } from "@tabler/icons-react";
+import { getCommentById } from "../../../api/comments";
 
 const CommentsList: React.FC<{ postId: string; username: string }> = ({
   postId,
@@ -18,7 +18,11 @@ const CommentsList: React.FC<{ postId: string; username: string }> = ({
     };
 
   useEffect(() => {
-    setComments(getCommentsByPostId(postId));
+    const fetchComments = async () => {
+      const comment = await getCommentById(postId);
+      setComments([comment]);
+    };
+    fetchComments();
   }, [postId]);
 
   return (

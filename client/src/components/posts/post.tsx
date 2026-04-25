@@ -92,7 +92,7 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
         try {
           const u = await getUserById(senderId);
           setCommentUsernames((prev) => ({ ...prev, [senderId]: u ? u.username : senderId }));
-        } catch (_) {
+        } catch {
           setCommentUsernames((prev) => ({ ...prev, [senderId]: senderId }));
         }
       }
@@ -119,7 +119,7 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
           <Image src={imageUrl} height={500} />
         </Card.Section>
         <Card.Section>
-          <PostFooter id={id} userId={userId} likedBy={likedBy} username={user.username} />
+          <PostFooter id={id} userId={userId} likedBy={likedBy} />
         </Card.Section>
         <Flex align={"center"} gap={"sm"} px={"sm"}>
           <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
