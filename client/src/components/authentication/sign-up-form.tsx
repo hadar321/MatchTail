@@ -2,6 +2,7 @@ import { useForm } from "@mantine/form";
 import { Button, Card, FileInput, Stack, TextInput ,Title } from "@mantine/core";
 import { register as apiRegister } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
+import avatarImg from "../../assets/avatar.png";
 
 const SignUpForm: React.FC = () => {
   const form = useForm({
@@ -11,6 +12,7 @@ const SignUpForm: React.FC = () => {
       username: "",
       password: "",
       confirmPassword: "",
+      profileImage: null as File | null,
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
@@ -25,9 +27,9 @@ const SignUpForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: { email: string; password: string; username: string }) => {
+  const handleSubmit = async (values: { email: string; password: string; username: string; profileImage: File | null }) => {
     try {
-      await apiRegister(values.username, values.email, values.password);
+      await apiRegister(values.username, values.email, values.password, values.profileImage ? values.profileImage : undefined);
       alert("Registration successful. Please log in.");
       navigate("/");
     } catch (err: unknown) {
@@ -71,8 +73,8 @@ const SignUpForm: React.FC = () => {
               {...form.getInputProps("username")}
               error={form.errors.username}
             />
-            <FileInput label="Avatar" placeholder="Choose your avatar" />
             <TextInput
+              type="password"
               label="Password"
               placeholder="password"
               key={form.key("password")}
@@ -80,11 +82,25 @@ const SignUpForm: React.FC = () => {
               error={form.errors.password}
             />
             <TextInput
+              type="password"
               label="Confirm password"
               placeholder="confirm password"
               key={form.key("confirmPassword")}
               {...form.getInputProps("confirmPassword")}
               error={createConfirmPasswordError()}
+            />
+            <FileInput
+              label="Profile Image"
+              placeholder="Choose your profile image"
+              key={form.key("profileImage")}
+              {...form.getInputProps("profileImage")}
+              accept="image/*"
+              error={form.errors.profileImage}
+            />
+            <img
+              src={form.getValues().profileImage ? URL.createObjectURL(form.getValues().profileImage as File) : avatarImg}
+              alt="Profile Image preview"
+              style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" ,alignSelf: "center"}}
             />
             <Button type="submit">Sign Up</Button>
           </Stack>
