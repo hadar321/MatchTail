@@ -8,7 +8,7 @@ import { SignUpForm } from "./authentication/sign-up-form";
 import { Search } from "./search";
 import { Profile } from "./profile";
 import { CreatePost } from "./create-post";
-import { IconSearch, IconUser, IconLogout, IconPlus } from "@tabler/icons-react";
+import { IconSearch, IconUser, IconLogout, IconPlus, IconImageInPicture } from "@tabler/icons-react";
 import { useState } from "react";
 import { logout } from "../api/auth";
 import { UpdatePost } from "./posts/edit-post";
@@ -70,7 +70,7 @@ const AppContent: React.FC = () => {
           <div>
             <NavLink
               label="Posts"
-              leftSection={<IconUser size="1rem" />}
+              leftSection={<IconImageInPicture size="1rem" />}
               onClick={() => { navigate('/postsList'); setDrawerOpened(false); }}
             />
             <NavLink
