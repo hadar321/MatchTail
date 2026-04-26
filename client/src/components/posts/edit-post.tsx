@@ -1,4 +1,4 @@
-import { Stack, Button, TextInput, Card, Title, FileInput, Text } from "@mantine/core";
+import { Stack, Button, TextInput, Card, Title, FileInput, Text, Textarea, Group } from "@mantine/core";
 import { useState } from "react";
 import { updatePost } from "../../api/posts";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,29 +18,58 @@ const UpdatePost: React.FC = () => {
   const [postContent, setContent] = useState(content || "");
 
   return (
-    <Stack justify={"center"} align={"center"} style={{ minHeight: "50vh" }}>
-      <Card shadow={"sm"} padding="lg" radius="md" w={"24vw"} withBorder>
-        <div >
-          <Title order={2} align="center" mb="md">Update Post</Title>
-          {/* <Text mt="md">post title:</Text>
-          <TextInput placeholder="Title" value={title} onChange={(e) => setTitle(e.currentTarget.value)} /> */}
-          <Text mt="md">post content:</Text>
-          <TextInput placeholder="Content" value={postContent} onChange={(e) => setContent(e.currentTarget.value)} />
-          <Text mt="md">post image:</Text>
-          <Image mt={"sm"} src={postImageFile ? (postImageFile.size > 0 ? URL.createObjectURL(postImageFile) : `${API_BASE}/${postImageFile.name}`) : image} alt="Post image preview" style={{ width: "100%", height: "auto", marginBottom: 8 }} />
-          <FileInput placeholder="upload image" onChange={(file) => setPostImage(file || null)} />
-          <Button fullWidth mt={30} onClick={async () => {
-            try {
-              await updatePost(id, { title, content, postImage: postImageFile || null });
-              navigate('/profile');
-            } catch (e: unknown) {
-              const error = e as { response?: { data?: string; status?: number }; message?: string };
-              const msg = error?.response?.data || error?.message || "Failed to update post";
-              alert(msg);
-              if (error?.response?.status === 401) navigate('/');
-            }
-          }}>Update Post</Button>
-        </div>
+    <Stack justify={"center"} align={"center"} style={{ minHeight: "80vh", padding: "2rem" }}>
+      <Card shadow="md" padding="xl" radius="lg" w={{ base: '90vw', sm: '28vw' }} withBorder>
+        <Stack gap="md">
+          <Title order={2} align="center" mb="sm" fw={700} c="blue.7">Update Post</Title>
+          
+          <div>
+            <Text fw={500} size="sm" mb={4}>Post Content</Text>
+            <Textarea 
+              placeholder="What's on your mind?" 
+              value={postContent} 
+              onChange={(e) => setContent(e.currentTarget.value)} 
+              minRows={4}
+              radius="md"
+            />
+          </div>
+
+          <div>
+            <Text fw={500} size="sm" mb={4}>Post Image</Text>
+            <Card withBorder radius="md" p="xs" mb="sm">
+              <Image 
+                src={postImageFile ? (postImageFile.size > 0 ? URL.createObjectURL(postImageFile) : `${API_BASE}/${postImageFile.name}`) : image} 
+                alt="Post image preview" 
+                radius="md"
+                style={{ width: "100%", height: "200px", objectFit: "cover" }} 
+              />
+            </Card>
+            <FileInput 
+              placeholder="Upload a new image" 
+              radius="md"
+              onChange={(file) => setPostImage(file || null)} 
+            />
+          </div>
+
+          <Group grow mt="xl">
+            <Button variant="light" color="gray" radius="md" onClick={() => navigate('/profile')}>
+              Cancel
+            </Button>
+            <Button radius="md" color="blue" onClick={async () => {
+              try {
+                await updatePost(id, { title, content: postContent, postImage: postImageFile || null });
+                navigate('/profile');
+              } catch (e: unknown) {
+                const error = e as { response?: { data?: string; status?: number }; message?: string };
+                const msg = error?.response?.data || error?.message || "Failed to update post";
+                alert(msg);
+                if (error?.response?.status === 401) navigate('/');
+              }
+            }}>
+              Save Changes
+            </Button>
+          </Group>
+        </Stack>
       </Card>
     </Stack>
   );
