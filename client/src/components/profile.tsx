@@ -2,11 +2,11 @@ import { Text, Stack, Card, Button, Title, Group, Avatar, Container, Divider } f
 import { useEffect, useState } from "react";
 import { getUserById } from "../services/user-service";
 import { Post as PostType } from "../types/post";
-import { getPostsByUser } from "../api/posts";
+import { getPostsByUser, deletePost } from "../api/posts";
 import avatarImg from "../assets/avatar.png";
 import { Post } from "./posts/post";
 import { useNavigate } from "react-router-dom";
-import { IconEdit } from "@tabler/icons-react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
@@ -31,6 +31,19 @@ const Profile: React.FC = () => {
       });
     }
   }, []);
+
+  const handleDelete = async (postId: string) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await deletePost(postId);
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to delete post", e);
+        alert("Failed to delete post");
+      }
+    }
+  };
 
   return (
     <Container size="sm" mt={100} mb={80}>
@@ -71,15 +84,26 @@ const Profile: React.FC = () => {
               lastUpdated={post.lastUpdated}
               likedBy={post.likedBy}
             />
-            <Button 
-              variant="subtle" 
-              color="gray" 
-              size="sm"
-              leftSection={<IconEdit size={14} />}
-              onClick={() => navigate(`/edit-post`, { state: post })}
-            >
-              Edit Post
-            </Button>
+            <Group gap="xs">
+              <Button 
+                variant="subtle" 
+                color="red" 
+                size="sm"
+                leftSection={<IconTrash size={14} />}
+                onClick={() => handleDelete(post.id)}
+              >
+                Delete
+              </Button>
+              <Button 
+                variant="subtle" 
+                color="gray" 
+                size="sm"
+                leftSection={<IconEdit size={14} />}
+                onClick={() => navigate(`/edit-post`, { state: post })}
+              >
+                Edit
+              </Button>
+            </Group>
           </Stack>
         ))}
         {posts.length === 0 && (
