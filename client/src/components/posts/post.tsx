@@ -1,4 +1,4 @@
-import { Card, Flex, Image, Text, TextInput, Button, Group, Divider, Avatar, Stack, ActionIcon } from "@mantine/core";
+import { Card, Flex, Image, Text, TextInput, Button, Group, Divider, Avatar, Stack, ActionIcon, Collapse } from "@mantine/core";
 import { PostHeader } from "./post-header";
 import { Post as PostType } from "../../types/post";
 import { getUserById } from "../../services/user-service";
@@ -18,6 +18,7 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) =
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentUsernames, setCommentUsernames] = useState<Record<string, string>>({});
   const [newComment, setNewComment] = useState("");
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -139,16 +140,29 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) =
         <Divider color="gray.2" />
 
         <div style={{ padding: '16px' }}>
-          <Text fw={700} size="sm" mb="xs" c="dimmed">Comments ({comments.length})</Text>
+          {comments.length > 0 && (
+            <Text 
+              fw={700} 
+              size="sm" 
+              mb="xs" 
+              c="dimmed" 
+              style={{ cursor: "pointer", userSelect: "none" }}
+              onClick={() => setShowComments((prev) => !prev)}
+            >
+              {showComments ? "Hide comments" : `View all ${comments.length} comments`}
+            </Text>
+          )}
           
-          <Stack gap="xs" mb="md">
-            {comments.map((c) => (
-              <Group key={c._id} wrap="nowrap" align="flex-start" gap="xs">
-                <Text size="sm" fw={600}>{commentUsernames[c.sender] ?? c.sender}</Text>
-                <Text size="sm">{c.content}</Text>
-              </Group>
-            ))}
-          </Stack>
+          <Collapse in={showComments}>
+            <Stack gap="xs" mb="md" mt="sm">
+              {comments.map((c) => (
+                <Group key={c._id} wrap="nowrap" align="flex-start" gap="xs">
+                  <Text size="sm" fw={600}>{commentUsernames[c.sender] ?? c.sender}</Text>
+                  <Text size="sm">{c.content}</Text>
+                </Group>
+              ))}
+            </Stack>
+          </Collapse>
 
           <Group wrap="nowrap" mt="md" align="center" gap="sm">
             <TextInput
