@@ -12,7 +12,7 @@ import image from "../../assets/image.png";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
-const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) => {
+const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) => {
   const [user, setUser] = useState<User>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentUsernames, setCommentUsernames] = useState<Record<string, string>>({});
@@ -118,7 +118,7 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
           ></PostHeader>
         </Card.Section>
         <Card.Section>
-          <Image src={imageUrl? `${API_BASE}/${imageUrl}`: image} height={500} />
+          <Image src={postImage? `${API_BASE}/${postImage}`: image} height={500} />
         </Card.Section>
         <Card.Section>
           <PostFooter id={id} userId={userId} likedBy={likedBy} />

@@ -5,10 +5,12 @@ import { Post as PostType } from "../types/post";
 import { getPostsByUser } from "../api/posts";
 import avatarImg from "../assets/avatar.png";
 import { Post } from "./posts/post";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
 
@@ -25,9 +27,6 @@ const Profile: React.FC = () => {
         // eslint-disable-next-line no-console
           console.error("Failed to load posts by user", e);
         }
-        // getPostsByUser(userId).then((p) => {
-        //   setPosts(p);
-        // });
       });
     }
   }, []);
@@ -54,14 +53,14 @@ const Profile: React.FC = () => {
           <Post
             key={post.id}
             id={post.id}
-            userId={user.userId}
+            userId={post.userId}
             content={post.content}
             animal={post.animal}
-            imageUrl={post.imageUrl}
+            postImage={post.postImage}
             lastUpdated={post.lastUpdated}
             likedBy={post.likedBy}
           />
-          <Button type="button" color="gray" onClick={() => alert("Post ID: " + post.id)}>Edit Post</Button>
+          <Button type="button" color="gray" onClick={() => navigate(`/edit-post`, { state: post })}>Edit Post</Button>
         </>
       ))}
       

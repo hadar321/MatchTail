@@ -3,7 +3,7 @@ interface Post {
     userId: string;
     animal: string;
     content: string;
-    imageUrl: string;
+    postImage: string;
     lastUpdated: Date;
     likedBy: string[];
 }

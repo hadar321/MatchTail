@@ -86,7 +86,7 @@ const PostsList: React.FC = () => {
           userId={post.userId}
           content={post.content}
           animal={post.animal}
-          imageUrl={post.imageUrl}
+          postImage={post.postImage}
           lastUpdated={post.lastUpdated}
           likedBy={post.likedBy}
         />

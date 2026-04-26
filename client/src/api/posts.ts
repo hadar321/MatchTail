@@ -11,7 +11,7 @@ function mapBackend(b: BackendPost): ClientPost {
     userId: b.sender,
     animal: "",
     content: b.content || b.title,
-    imageUrl: b.postImage || "",
+    postImage: b.postImage || "",
     lastUpdated: new Date(),
     likedBy: b.likedBy ?? [],
   };
@@ -36,10 +36,10 @@ export async function createPost(payload: { title: string; content: string; post
 
 export async function updatePost(
   id: string,
-  payload: { title?: string; content?: string; postImage?: File | undefined; likedBy?: string[] }
+  payload: { title?: string; content?: string; postImage?: File | null; likedBy?: string[] }
 ) {
   const res = await axios.put<BackendPost>(`${API_BASE}/posts/${id}`, payload, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "multipart/form-data" },
   });
   return mapBackend(res.data);
 }
