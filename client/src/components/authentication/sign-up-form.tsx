@@ -12,7 +12,7 @@ const SignUpForm: React.FC = () => {
       username: "",
       password: "",
       confirmPassword: "",
-      avatar: null as File | null,
+      profileImage: null as File | null,
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
@@ -27,9 +27,9 @@ const SignUpForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: { email: string; password: string; username: string; avatar: File | null }) => {
+  const handleSubmit = async (values: { email: string; password: string; username: string; profileImage: File | null }) => {
     try {
-      await apiRegister(values.username, values.email, values.password, values.avatar ? URL.createObjectURL(values.avatar) : undefined);
+      await apiRegister(values.username, values.email, values.password, values.profileImage ? values.profileImage : undefined);
       alert("Registration successful. Please log in.");
       navigate("/");
     } catch (err: unknown) {
@@ -74,6 +74,7 @@ const SignUpForm: React.FC = () => {
               error={form.errors.username}
             />
             <TextInput
+              type="password"
               label="Password"
               placeholder="password"
               key={form.key("password")}
@@ -81,6 +82,7 @@ const SignUpForm: React.FC = () => {
               error={form.errors.password}
             />
             <TextInput
+              type="password"
               label="Confirm password"
               placeholder="confirm password"
               key={form.key("confirmPassword")}
@@ -88,16 +90,16 @@ const SignUpForm: React.FC = () => {
               error={createConfirmPasswordError()}
             />
             <FileInput
-              label="Avatar"
-              placeholder="Choose your avatar"
-              key={form.key("avatar")}
-              {...form.getInputProps("avatar")}
+              label="Profile Image"
+              placeholder="Choose your profile image"
+              key={form.key("profileImage")}
+              {...form.getInputProps("profileImage")}
               accept="image/*"
-              error={form.errors.avatar}
+              error={form.errors.profileImage}
             />
             <img
-              src={form.getValues().avatar ? URL.createObjectURL(form.getValues().avatar as File) : avatarImg}
-              alt="Avatar preview"
+              src={form.getValues().profileImage ? URL.createObjectURL(form.getValues().profileImage as File) : avatarImg}
+              alt="Profile Image preview"
               style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" ,alignSelf: "center"}}
             />
             <Button type="submit">Sign Up</Button>

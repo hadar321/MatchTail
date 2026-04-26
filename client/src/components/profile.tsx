@@ -6,6 +6,8 @@ import { getPostsByUser } from "../api/posts";
 import avatarImg from "../assets/avatar.png";
 import { Post } from "./posts/post";
 
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
+
 const Profile: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -24,11 +26,11 @@ const Profile: React.FC = () => {
 
   return (
     <Stack align={"center"} justify={"center"} mt={100}>
-      <Title>pesonal details:</Title>
+      <Title>personal details:</Title>
       <Card shadow={"sm"} padding="lg" radius="md" w={"24vw"} withBorder>
             <Stack align="left">
             <img
-              src={user?.avatarURL ? user.avatarURL : avatarImg}
+              src={user?.profileImage ? `${API_BASE}/${user.profileImage}` : avatarImg}
               alt="Avatar preview"
               style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" ,alignSelf: "center"}}
             />
