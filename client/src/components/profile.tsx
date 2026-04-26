@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
             <Text>username: {user?.username}</Text>
             <Text>email: {user?.email}</Text>
 
-            <Button type="button">edit profile</Button>
+            <Button type="button" onClick={() => navigate('/edit-profile', { state: user })}>edit profile</Button>
               </Stack>
           </Card>
         <Title>your posts:</Title>

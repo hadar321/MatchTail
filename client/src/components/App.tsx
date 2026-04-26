@@ -12,6 +12,7 @@ import { IconSearch, IconUser, IconLogout, IconPlus } from "@tabler/icons-react"
 import { useState } from "react";
 import { logout } from "../api/auth";
 import { UpdatePost } from "./posts/edit-post";
+import { EditProfile } from "./edit-profile";
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
@@ -105,6 +106,7 @@ const AppContent: React.FC = () => {
         <Route path="/edit-post" element={<UpdatePost />} />
         <Route path="/search" element={<Search />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/signup" element={<SignUpForm />} />
       </Routes>
     </div>
