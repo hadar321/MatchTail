@@ -8,7 +8,9 @@ import { useEffect, useState } from "react"
 import { User } from "../../types/user";
 import { getComments, createComment } from "../../api/comments";
 import type { Comment } from "../../types/comment";
+import image from "../../assets/image.png";
 
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
 const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) => {
   const [user, setUser] = useState<User>();
@@ -112,11 +114,11 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
         <Card.Section>
           <PostHeader
             username={user.username}
-            avatarURL={user.avatarURL}
+            profileImage={user.profileImage}
           ></PostHeader>
         </Card.Section>
         <Card.Section>
-          <Image src={imageUrl} height={500} />
+          <Image src={imageUrl? `${API_BASE}/${imageUrl}`: image} height={500} />
         </Card.Section>
         <Card.Section>
           <PostFooter id={id} userId={userId} likedBy={likedBy} />

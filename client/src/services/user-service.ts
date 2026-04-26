@@ -20,7 +20,7 @@ const getUserById = async (userId: string): Promise<User | undefined> => {
       _id: userId,
       username: "Unknown",
       password: "",
-      avatarURL: "",
+      profileImage: "",
       email: "",
       lastUpdate: new Date(),
     } as User;

@@ -27,16 +27,16 @@ export async function getPostById(id: string) {
   return mapBackend(res.data);
 }
 
-export async function createPost(payload: { title: string; content: string; postImage: string }) {
+export async function createPost(payload: { title: string; content: string; postImage: File | null }) {
   const res = await axios.post<BackendPost>(`${API_BASE}/posts`, payload, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "multipart/form-data"},
   });
   return mapBackend(res.data);
 }
 
 export async function updatePost(
   id: string,
-  payload: { title?: string; content?: string; postImage?: string; likedBy?: string[] }
+  payload: { title?: string; content?: string; postImage?: File | undefined; likedBy?: string[] }
 ) {
   const res = await axios.put<BackendPost>(`${API_BASE}/posts/${id}`, payload, {
     headers: { "Content-Type": "application/json" },
@@ -49,8 +49,9 @@ export async function deletePost(id: string) {
   return mapBackend(res.data);
 }
 
-export async function getPostsByUser(userId: string) {
-  return getPosts({ userId });
+export async function getPostsByUser(sender: string) {
+  const res = await axios.get<BackendPost[]>(`${API_BASE}/posts?sender=${sender}`);
+  return res.data.map(mapBackend);
 }
 
 export async function getPostsBySearch(query: string) {
