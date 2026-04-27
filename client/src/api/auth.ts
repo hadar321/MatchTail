@@ -16,12 +16,28 @@ export async function login(emailOrUsername: string, password: string) {
   return res.data; // expects { accessToken, refreshToken, _id }
 }
 
-export async function register(username: string, email: string, password: string) {
-  const payload = { username, email, password };
-  const res = await axios.post(`${API_BASE}/auth/register`, payload, {
+export async function register(username: string, email: string, password: string, profileImage?: File) {
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("password", password);
+
+  if (profileImage) {
+    formData.append("profileImage", profileImage);
+  }
+  
+  const res = await axios.post(`${API_BASE}/auth/register`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+    return res.data;
+}
+
+export async function logout(refreshToken: string) {
+  const payload = { refreshToken };
+  const res = await axios.post(`${API_BASE}/auth/logout`, payload, {
     headers: { "Content-Type": "application/json" },
   });
-  return res.data;
+    return res.data;
 }
 
 export async function googleLogin(credential: string) {

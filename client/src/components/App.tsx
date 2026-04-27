@@ -1,15 +1,34 @@
 import "@mantine/core/styles.css";
-import { createTheme, Flex, MantineProvider } from "@mantine/core";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createTheme, Flex, MantineProvider, Drawer, NavLink, Button, Burger } from "@mantine/core";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { PostsList } from "./posts/posts-list";
 import { Header } from "./home/header";
 import { LoginForm } from "./authentication/login";
 import { SignUpForm } from "./authentication/sign-up-form";
+import { Search } from "./search";
+import { Profile } from "./profile";
+import { CreatePost } from "./create-post";
+import { IconSearch, IconUser, IconLogout, IconPlus, IconImageInPicture } from "@tabler/icons-react";
+import { useState } from "react";
+import { logout } from "../api/auth";
+import { UpdatePost } from "./posts/edit-post";
+import { EditProfile } from "./edit-profile";
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
   defaultRadius: "md",
 });
+
+const handleLogout = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userId");
+  if (refreshToken) {
+    await logout(refreshToken);
+  }
+  window.location.href = "/";
+}
 
 const backgroundStyle: React.CSSProperties = {
   minHeight: "100vh",
@@ -21,25 +40,87 @@ const backgroundStyle: React.CSSProperties = {
   justifyContent: "center",
 };
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [drawerOpened, setDrawerOpened] = useState(false);
+  const isAuthenticatedRoute = ['/postsList', '/search', '/profile', '/createPost'].includes(location.pathname);
+
   return (
-    <MantineProvider theme={theme} >
-      {/* <Header /> */}
-      <div style={backgroundStyle}>
-        <Flex h={"100%"} align={"center"} justify={"center"}>
-          <Header />
+    <div style={backgroundStyle}>
+      <Flex h={"100%"} align={"center"} justify={"center"} style={{ width: '100%', position: 'relative' }}>
+        <Header />
+        {isAuthenticatedRoute && (
+          <Burger
+            opened={drawerOpened}
+            onClick={() => setDrawerOpened((o) => !o)}
+            size="lg"
+            style={{ position: 'absolute', left: 50, top: 50 }}
+          />
+        )}
+      </Flex>
+      <Drawer
+        opened={drawerOpened}
+        onClose={() => setDrawerOpened(false)}
+        title="Menu"
+        padding="lg"
+        size="md"
+      >
+        <Flex direction="column" h="100%">
+          <div>
+            <NavLink
+              label="Posts"
+              leftSection={<IconImageInPicture size="1rem" />}
+              onClick={() => { navigate('/postsList'); setDrawerOpened(false); }}
+            />
+            <NavLink
+              label="Create Post"
+              leftSection={<IconPlus size="1rem" />}
+              onClick={() => { navigate('/createPost'); setDrawerOpened(false); }}
+            />
+            <NavLink
+              label="Search"
+              leftSection={<IconSearch size="1rem" />}
+              onClick={() => { navigate('/search'); setDrawerOpened(false); }}
+            />
+            <NavLink
+              label="Profile"
+              leftSection={<IconUser size="1rem" />}
+              onClick={() => { navigate('/profile'); setDrawerOpened(false); }}
+            />
+          </div>
+          <Button
+            leftSection={<IconLogout size="2rem" />}
+            // onClick={() => { navigate('/'); setDrawerOpened(false); }}
+            style={{ marginTop: 'auto' }}
+            onClick={() => { handleLogout(); setDrawerOpened(false); navigate('/'); }}
+          >
+            Logout
+          </Button>
         </Flex>
-        <Router>
-          <Routes>
-            <Route path="/" element={<LoginForm />}></Route>
-            <Route path="/postsList" element={<PostsList />}></Route>
-            <Route path="/signup" element={<SignUpForm />}></Route>
-          </Routes>
-        </Router>
-      </div>
-    </MantineProvider>
+      </Drawer>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/postsList" element={<PostsList />} />
+        <Route path="/createPost" element={<CreatePost />} />
+        <Route path="/edit-post" element={<UpdatePost />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/signup" element={<SignUpForm />} />
+      </Routes>
+    </div>
   );
 };
 
+const App: React.FC = () => {
+  return (
+    <MantineProvider theme={theme}>
+      <Router>
+        <AppContent />
+      </Router>
+    </MantineProvider>
+  );
+};
 
 export { App };

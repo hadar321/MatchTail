@@ -1,7 +1,7 @@
 import { ThemeIcon } from "@mantine/core";
 import { Group, Stack } from "@mantine/core";
 import { IconPawFilled } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { Post } from "../../types/post";
 import { gray, orange } from "../../consts";
@@ -16,11 +16,6 @@ type Props = Pick<Post, "id" | "userId" | "likedBy"> & {
 const PostFooter: React.FC<Props> = ({ id, userId, likedBy }) => {
   const [isLiked, setIsLiked] = useState<boolean>(likedBy.includes(userId));
   const [likesCount, setLikesCount] = useState<number>(likedBy.length);
-
-  useEffect(() => {
-    setLikesCount(likedBy.length);
-    setIsLiked(likedBy.includes(userId));
-  }, [likedBy, userId]);
 
   const handlePawClick = async () => {
     // optimistic toggle locally

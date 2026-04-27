@@ -1,7 +1,5 @@
 import { useForm } from "@mantine/form";
-import { Button, Card, Stack, TextInput } from "@mantine/core";
-import { orange } from "../../consts"; 
-import { Group } from "@mantine/core";
+import { Button, Card, Stack, TextInput, PasswordInput, Title, Container, Text, Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { login as apiLogin, googleLogin as apiGoogleLogin } from "../../api/auth";
@@ -62,40 +60,49 @@ const LoginForm: React.FC = () => {
     };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-        <Stack>
-          <TextInput
-            label="Email"
-            placeholder="your@email.com"
-            key={form.key("email")}
-            {...form.getInputProps("email")}
-            error={form.errors.email}
-          />
-          <TextInput
-            label="Password"
-            placeholder="password"
-            key={form.key("password")}
-            {...form.getInputProps("password")}
-            error={form.errors.password}
-          />
-          <Button type="submit">Log In</Button>
-          <Group justify="center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => alert("Google Login Failed")}
+    <Container size="xs" mt={120}>
+      <Card shadow="md" padding="xl" radius="lg" withBorder>
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+          <Stack gap="md">
+            <Title order={2} ta="center" fw={700} c="blue.7" mb="sm">Welcome Back</Title>
+            <TextInput
+              label="Email"
+              placeholder="your@email.com"
+              radius="md"
+              key={form.key("email")}
+              {...form.getInputProps("email")}
+              error={form.errors.email}
             />
-          </Group>
-           <Card.Section withBorder inheritPadding>
-            <Group justify="center" mt={"sm"} mb={"sm"}>
-              <Button type="button" color={orange} onClick={() => navigate("/signup")}>
-                Sign Up
-              </Button>
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              radius="md"
+              key={form.key("password")}
+              {...form.getInputProps("password")}
+              error={form.errors.password}
+            />
+            <Button type="submit" radius="md" mt="md" fullWidth>Log In</Button>
+            <Group justify="center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => alert("Google Login Failed")}
+              />
             </Group>
-          </Card.Section>
-        </Stack>
-      </form>
-    </Card>
+            <Text c="dimmed" size="sm" ta="center" mt="md">
+              Don't have an account?{" "}
+              <Text 
+                component="span" 
+                c="blue" 
+                style={{ cursor: "pointer" }} 
+                onClick={() => navigate("/signup")}
+              >
+                Sign Up
+              </Text>
+            </Text>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 };
 
