@@ -1,4 +1,4 @@
-import { Card , Flex, Image, Text, TextInput, Button } from "@mantine/core";
+import { Card, Flex, Image, Text, TextInput, Button, Group, Divider, Avatar, Stack, ActionIcon, Collapse } from "@mantine/core";
 import { PostHeader } from "./post-header";
 import { Post as PostType } from "../../types/post";
 import { getUserById } from "../../services/user-service";
@@ -9,14 +9,16 @@ import { User } from "../../types/user";
 import { getComments, createComment } from "../../api/comments";
 import type { Comment } from "../../types/comment";
 import image from "../../assets/image.png";
+import { IconSend } from "@tabler/icons-react";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
-const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) => {
+const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) => {
   const [user, setUser] = useState<User>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentUsernames, setCommentUsernames] = useState<Record<string, string>>({});
   const [newComment, setNewComment] = useState("");
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -106,42 +108,82 @@ const Post: React.FC<PostType> = ({ id, userId, imageUrl, content, likedBy }) =>
     }
   };
 
-  
-
   return (
      !isNil(user) && (
-      <Card shadow={"sm"} padding={"lg"} radius={"md"} w={"36vw"} withBorder>
-        <Card.Section>
+      <Card shadow="md" padding="0" radius="lg" w="100%" style={{ overflow: 'hidden' }} withBorder>
+        
+        <Card.Section inheritPadding py="sm">
           <PostHeader
             username={user.username}
             profileImage={user.profileImage}
           ></PostHeader>
         </Card.Section>
+
         <Card.Section>
-          <Image src={imageUrl? `${API_BASE}/${imageUrl}`: image} height={500} />
+          <Image 
+            src={postImage ? `${API_BASE}/${postImage}` : image} 
+            height={500} 
+            fit="cover"
+            fallbackSrc={image}
+          />
         </Card.Section>
-        <Card.Section>
+
+        <Card.Section inheritPadding py="sm">
           <PostFooter id={id} userId={userId} likedBy={likedBy} />
         </Card.Section>
-        <Flex align={"center"} gap={"sm"} px={"sm"}>
-          <Text style={{ fontWeight: "bold" }}>{user.username}</Text>
-          <Text>{content}</Text>
+
+        <Flex align="flex-start" gap="sm" px="md" pb="sm">
+          <Text fw={700} size="sm">{user.username}</Text>
+          <Text size="sm">{content}</Text>
         </Flex>
-        <div style={{ padding: 12 }}>
-          <Text fw={700}>Comments ({comments.length})</Text>
-          {comments.map((c) => (
-            <div key={c._id} style={{ marginTop: 8 }}>
-              <Text size="sm"><strong>{commentUsernames[c.sender] ?? c.sender}</strong>: {c.content}</Text>
-            </div>
-          ))}
-          <div style={{ marginTop: 12 }}>
+
+        <Divider color="gray.2" />
+
+        <div style={{ padding: '16px' }}>
+          {comments.length > 0 && (
+            <Text 
+              fw={700} 
+              size="sm" 
+              mb="xs" 
+              c="dimmed" 
+              style={{ cursor: "pointer", userSelect: "none" }}
+              onClick={() => setShowComments((prev) => !prev)}
+            >
+              {showComments ? "Hide comments" : `View all ${comments.length} comments`}
+            </Text>
+          )}
+          
+          <Collapse in={showComments}>
+            <Stack gap="xs" mb="md" mt="sm">
+              {comments.map((c) => (
+                <Group key={c._id} wrap="nowrap" align="flex-start" gap="xs">
+                  <Text size="sm" fw={600}>{commentUsernames[c.sender] ?? c.sender}</Text>
+                  <Text size="sm">{c.content}</Text>
+                </Group>
+              ))}
+            </Stack>
+          </Collapse>
+
+          <Group wrap="nowrap" mt="md" align="center" gap="sm">
             <TextInput
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.currentTarget.value)}
+              radius="xl"
+              style={{ flex: 1 }}
+              onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
             />
-            <Button mt={8} onClick={handleAddComment}>Add Comment</Button>
-          </div>
+            <ActionIcon 
+              variant="light" 
+              color="blue" 
+              size="lg" 
+              radius="xl" 
+              onClick={handleAddComment}
+              disabled={!newComment.trim()}
+            >
+              <IconSend size={18} />
+            </ActionIcon>
+          </Group>
         </div>
       </Card>
     )

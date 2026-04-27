@@ -1,14 +1,17 @@
-import { Text, Stack, Card, Button, Title } from "@mantine/core";
+import { Text, Stack, Card, Button, Title, Group, Avatar, Container, Divider } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { getUserById } from "../services/user-service";
 import { Post as PostType } from "../types/post";
-import { getPostsByUser } from "../api/posts";
+import { getPostsByUser, deletePost } from "../api/posts";
 import avatarImg from "../assets/avatar.png";
 import { Post } from "./posts/post";
+import { useNavigate } from "react-router-dom";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
 
@@ -22,52 +25,93 @@ const Profile: React.FC = () => {
           const data = await getPostsByUser(userId);
           setPosts(data);
         } catch (e) {
-        // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
           console.error("Failed to load posts by user", e);
         }
-        // getPostsByUser(userId).then((p) => {
-        //   setPosts(p);
-        // });
       });
     }
   }, []);
 
-  return (
-    <Stack align={"center"} justify={"center"} mt={100}>
-      <Title>personal details:</Title>
-      <Card shadow={"sm"} padding="lg" radius="md" w={"24vw"} withBorder>
-            <Stack align="left">
-            <img
-              src={user?.profileImage ? `${API_BASE}/${user.profileImage}` : avatarImg}
-              alt="Avatar preview"
-              style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" ,alignSelf: "center"}}
-            />
-            <Text>username: {user?.username}</Text>
-            <Text>email: {user?.email}</Text>
+  const handleDelete = async (postId: string) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await deletePost(postId);
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to delete post", e);
+        alert("Failed to delete post");
+      }
+    }
+  };
 
-            <Button type="button">edit profile</Button>
-              </Stack>
-          </Card>
-        <Title>your posts:</Title>
-      {posts.map((post) => (
-        <>
-          <Post
-            key={post.id}
-            id={post.id}
-            userId={user.userId}
-            content={post.content}
-            animal={post.animal}
-            imageUrl={post.imageUrl}
-            lastUpdated={post.lastUpdated}
-            likedBy={post.likedBy}
+  return (
+    <Container size="sm" mt={100} mb={80}>
+      <Card shadow="md" padding="xl" radius="lg" withBorder mb="xl">
+        <Group wrap="nowrap" align="center" gap="lg">
+          <Avatar 
+            src={user?.profileImage ? `${API_BASE}/${user.profileImage}` : avatarImg} 
+            size={120} 
+            radius={120}
           />
-          <Button type="button" color="gray" onClick={() => alert("Post ID: " + post.id)}>Edit Post</Button>
-        </>
-      ))}
+          <Stack gap={4} style={{ flex: 1 }}>
+            <Title order={2} fw={700}>{user?.username || 'Loading...'}</Title>
+            <Text c="dimmed" size="md">{user?.email}</Text>
+          </Stack>
+          <Button 
+            variant="light" 
+            color="blue" 
+            radius="md" 
+            leftSection={<IconEdit size={16} />}
+            onClick={() => navigate('/edit-profile', { state: user })}
+          >
+            Edit Profile
+          </Button>
+        </Group>
+      </Card>
+
+      <Divider my="xl" label={<Title order={3} c="gray.6">Your Posts</Title>} labelPosition="center" />
       
-    </Stack>
-    );
-     
+      <Stack gap="xl" align="center">
+        {posts.map((post) => (
+          <Stack key={post.id} gap="xs" align="flex-end" w={{ base: '90vw', md: '36vw' }}>
+            <Post
+              id={post.id}
+              userId={post.userId}
+              content={post.content}
+              animal={post.animal}
+              postImage={post.postImage}
+              lastUpdated={post.lastUpdated}
+              likedBy={post.likedBy}
+            />
+            <Group gap="xs">
+              <Button 
+                variant="subtle" 
+                color="red" 
+                size="sm"
+                leftSection={<IconTrash size={14} />}
+                onClick={() => handleDelete(post.id)}
+              >
+                Delete
+              </Button>
+              <Button 
+                variant="subtle" 
+                color="gray" 
+                size="sm"
+                leftSection={<IconEdit size={14} />}
+                onClick={() => navigate(`/edit-post`, { state: post })}
+              >
+                Edit
+              </Button>
+            </Group>
+          </Stack>
+        ))}
+        {posts.length === 0 && (
+          <Text c="dimmed" mt="md">You haven't made any posts yet.</Text>
+        )}
+      </Stack>
+    </Container>
+  );
 };
 
 export { Profile };

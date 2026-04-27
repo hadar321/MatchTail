@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Stack, Container, Loader, Text, Center } from "@mantine/core";
 import { Post } from "./post";
 import { Post as PostType } from "../../types/post";
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -75,25 +75,38 @@ const PostsList: React.FC = () => {
     };
   }, [loadMorePosts]);
 
-  if (loading) return <div>Loading posts…</div>;
+  if (loading) return (
+    <Container size="sm" mt={100} style={{ display: 'flex', justifyContent: 'center' }}>
+      <Loader color="blue" size="lg" />
+    </Container>
+  );
 
   return (
-    <Stack justify={"center"} align={"center"}>
-      {posts.map((post) => (
-        <Post
-          key={post.id}
-          id={post.id}
-          userId={post.userId}
-          content={post.content}
-          animal={post.animal}
-          imageUrl={post.imageUrl}
-          lastUpdated={post.lastUpdated}
-          likedBy={post.likedBy}
-        />
-      ))}
-      {loadingMore && <div>Loading more posts…</div>}
-      <div ref={observerRef} style={{ height: '20px' }} />
-    </Stack>
+    <Container size="sm" mt={100} mb={80}>
+      <Stack justify="center" align="center" gap="xl">
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            id={post.id}
+            userId={post.userId}
+            content={post.content}
+            animal={post.animal}
+            postImage={post.postImage}
+            lastUpdated={post.lastUpdated}
+            likedBy={post.likedBy}
+          />
+        ))}
+        {posts.length === 0 && (
+          <Text c="dimmed" mt="xl">No posts available.</Text>
+        )}
+        {loadingMore && (
+          <Center mt="md">
+            <Loader color="blue" size="sm" />
+          </Center>
+        )}
+        <div ref={observerRef} style={{ height: '20px' }} />
+      </Stack>
+    </Container>
   );
 };
 

@@ -38,4 +38,23 @@ const getUserByEmail = async (email: string): Promise<User | undefined> => {
   }
 };
 
-export { getUserById, getUserByEmail };
+const updateUser = async (
+  userId: string,
+  payload: { username?: string; email?: string; password?: string; profileImage?: File | null }
+): Promise<User> => {
+  const formData = new FormData();
+  if (payload.username) formData.append("username", payload.username);
+  if (payload.email) formData.append("email", payload.email);
+  if (payload.password) formData.append("password", payload.password);
+  if (payload.profileImage) formData.append("profileImage", payload.profileImage);
+
+  const res = await axios.put<User>(`${API_BASE}/users/${userId}`, formData, {
+    headers: {
+      ...authHeader(),
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};
+
+export { getUserById, getUserByEmail, updateUser };
