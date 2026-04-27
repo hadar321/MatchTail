@@ -23,3 +23,11 @@ export async function register(username: string, email: string, password: string
   });
   return res.data;
 }
+
+export async function googleLogin(credential: string) {
+  const payload = { credential };
+  const res = await axios.post(`${API_BASE}/auth/google`, payload, {
+    headers: { "Content-Type": "application/json" },
+  });
+  return res.data; // expects { accessToken, refreshToken, _id }
+}

@@ -3,7 +3,8 @@ import { Button, Card, Stack, TextInput } from "@mantine/core";
 import { orange } from "../../consts"; 
 import { Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { login as apiLogin } from "../../api/auth";
+import { GoogleLogin } from "@react-oauth/google";
+import { login as apiLogin, googleLogin as apiGoogleLogin } from "../../api/auth";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +20,24 @@ const LoginForm: React.FC = () => {
     },
   });
     
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+      try {
+        const credential = credentialResponse.credential;
+        const data = await apiGoogleLogin(credential);
+        if (data && data.accessToken) {
+          localStorage.setItem("token", data.accessToken);
+          if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+          if (data._id) localStorage.setItem("userId", data._id);
+          navigate("/postsList");
+        } else {
+          alert("Google Login failed: no token returned");
+        }
+      } catch (err: unknown) {
+        console.error("Google Login Error:", err);
+        alert("Google Login failed");
+      }
+    };
+
     const handleSubmit = async (values: { email: string; password: string }) => {
         try {
           const data = await apiLogin(values.email, values.password);
@@ -61,6 +80,12 @@ const LoginForm: React.FC = () => {
             error={form.errors.password}
           />
           <Button type="submit">Log In</Button>
+          <Group justify="center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => alert("Google Login Failed")}
+            />
+          </Group>
            <Card.Section withBorder inheritPadding>
             <Group justify="center" mt={"sm"} mb={"sm"}>
               <Button type="button" color={orange} onClick={() => navigate("/signup")}>
