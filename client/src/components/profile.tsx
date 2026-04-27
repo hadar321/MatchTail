@@ -15,11 +15,19 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
-      getUserById(userId).then((u) => {
+      getUserById(userId).then(async (u) => {
         setUser(u);
-        getPostsByUser(userId).then((p) => {
-          setPosts(p);
-        });
+
+        try {
+          const data = await getPostsByUser(userId);
+          setPosts(data);
+        } catch (e) {
+        // eslint-disable-next-line no-console
+          console.error("Failed to load posts by user", e);
+        }
+        // getPostsByUser(userId).then((p) => {
+        //   setPosts(p);
+        // });
       });
     }
   }, []);
@@ -46,7 +54,7 @@ const Profile: React.FC = () => {
           <Post
             key={post.id}
             id={post.id}
-            userId={post.userId}
+            userId={user.userId}
             content={post.content}
             animal={post.animal}
             imageUrl={post.imageUrl}

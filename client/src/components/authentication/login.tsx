@@ -54,6 +54,7 @@ const LoginForm: React.FC = () => {
             error={form.errors.email}
           />
           <TextInput
+            type="password"
             label="Password"
             placeholder="password"
             key={form.key("password")}

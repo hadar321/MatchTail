@@ -3,7 +3,7 @@ interface User {
   email: string;
   username: string;
   password: string;
-  avatarURL: string;
+  profileImage: string;
   lastUpdate: Date;
 }
 
