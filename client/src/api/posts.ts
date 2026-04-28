@@ -57,3 +57,13 @@ export async function getPostsByUser(sender: string) {
 export async function getPostsBySearch(query: string) {
   return getPosts({ search: query });
 }
+
+export async function smartSearch(query: string) {
+  const res = await axios.get<{ answer: string; posts: BackendPost[] }>(`${API_BASE}/posts/smart-search`, {
+    params: { q: query },
+  });
+  return {
+    answer: res.data.answer,
+    posts: res.data.posts.map(mapBackend),
+  };
+}

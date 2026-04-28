@@ -1,5 +1,6 @@
 import { Stack, Container, Loader, Text, Center } from "@mantine/core";
 import { Post } from "./post";
+import { SmartSearch } from "./SmartSearch";
 import { Post as PostType } from "../../types/post";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { getPosts } from "../../api/posts";
@@ -8,11 +9,14 @@ const POSTS_PER_PAGE = 10;
 
 const PostsList: React.FC = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [searchResults, setSearchResults] = useState<PostType[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const observerRef = useRef<HTMLDivElement>(null);
+
+  const displayPosts = searchResults !== null ? searchResults : posts;
 
   const loadPosts = useCallback(async (pageNum: number, append: boolean = false) => {
     try {
@@ -56,7 +60,7 @@ const PostsList: React.FC = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && searchResults === null) {
           loadMorePosts();
         }
       },
@@ -83,8 +87,12 @@ const PostsList: React.FC = () => {
 
   return (
     <Container size="sm" mt={100} mb={80}>
+      <SmartSearch onSearchResults={setSearchResults} />
+      {searchResults !== null && (
+        <Text size="sm" c="dimmed" mb="md" ta="center">מציג תוצאות חיפוש ממוקדות...</Text>
+      )}
       <Stack justify="center" align="center" gap="xl">
-        {posts.map((post) => (
+        {displayPosts.map((post) => (
           <Post
             key={post.id}
             id={post.id}
@@ -96,15 +104,15 @@ const PostsList: React.FC = () => {
             likedBy={post.likedBy}
           />
         ))}
-        {posts.length === 0 && (
+        {displayPosts.length === 0 && (
           <Text c="dimmed" mt="xl">No posts available.</Text>
         )}
-        {loadingMore && (
+        {loadingMore && searchResults === null && (
           <Center mt="md">
             <Loader color="blue" size="sm" />
           </Center>
         )}
-        <div ref={observerRef} style={{ height: '20px' }} />
+        {searchResults === null && <div ref={observerRef} style={{ height: '20px' }} />}
       </Stack>
     </Container>
   );
