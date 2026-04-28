@@ -16,10 +16,6 @@ server/dist/
 # =====================
 # Environment variables
 # =====================
-.env
-.env.*
-server/.env
-client/.env
 
 # =====================
 # Logs
