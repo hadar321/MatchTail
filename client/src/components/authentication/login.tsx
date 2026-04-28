@@ -1,7 +1,8 @@
 import { useForm } from "@mantine/form";
-import { Button, Card, Stack, TextInput, Title, Container, Text } from "@mantine/core";
+import { Button, Card, Stack, TextInput, PasswordInput, Title, Container, Text, Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { login as apiLogin } from "../../api/auth";
+import { GoogleLogin } from "@react-oauth/google";
+import { login as apiLogin, googleLogin as apiGoogleLogin } from "../../api/auth";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,24 @@ const LoginForm: React.FC = () => {
     },
   });
     
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+      try {
+        const credential = credentialResponse.credential;
+        const data = await apiGoogleLogin(credential);
+        if (data && data.accessToken) {
+          localStorage.setItem("token", data.accessToken);
+          if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+          if (data._id) localStorage.setItem("userId", data._id);
+          navigate("/postsList");
+        } else {
+          alert("Google Login failed: no token returned");
+        }
+      } catch (err: unknown) {
+        console.error("Google Login Error:", err);
+        alert("Google Login failed");
+      }
+    };
+
     const handleSubmit = async (values: { email: string; password: string }) => {
         try {
           const data = await apiLogin(values.email, values.password);
@@ -45,7 +64,7 @@ const LoginForm: React.FC = () => {
       <Card shadow="md" padding="xl" radius="lg" withBorder>
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Stack gap="md">
-            <Title order={2} align="center" fw={700} c="blue.7" mb="sm">Welcome Back</Title>
+            <Title order={2} ta="center" fw={700} c="blue.7" mb="sm">Welcome Back</Title>
             <TextInput
               label="Email"
               placeholder="your@email.com"
@@ -54,8 +73,7 @@ const LoginForm: React.FC = () => {
               {...form.getInputProps("email")}
               error={form.errors.email}
             />
-            <TextInput
-              type="password"
+            <PasswordInput
               label="Password"
               placeholder="Your password"
               radius="md"
@@ -64,7 +82,13 @@ const LoginForm: React.FC = () => {
               error={form.errors.password}
             />
             <Button type="submit" radius="md" mt="md" fullWidth>Log In</Button>
-            <Text c="dimmed" size="sm" align="center" mt="md">
+            <Group justify="center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => alert("Google Login Failed")}
+              />
+            </Group>
+            <Text c="dimmed" size="sm" ta="center" mt="md">
               Don't have an account?{" "}
               <Text 
                 component="span" 
