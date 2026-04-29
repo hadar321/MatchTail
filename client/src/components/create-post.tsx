@@ -14,7 +14,7 @@ const CreatePost: React.FC = () => {
     <Container size="sm" mt={100} mb={80}>
       <Card shadow="md" padding="xl" radius="lg" w={{ base: '90vw', sm: '28vw' }} style={{ margin: '0 auto' }} withBorder>
         <Stack gap="md">
-          <Title order={2} align="center" mb="sm" fw={700} c="blue.7">Create New Post</Title>
+          <Title order={2} ta="center" mb="sm" fw={700} c="blue.7">Create New Post</Title>
           
           <div>
             <Text fw={500} size="sm" mb={4}>Post Content</Text>
