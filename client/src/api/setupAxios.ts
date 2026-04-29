@@ -26,7 +26,7 @@ axios.interceptors.response.use(
       localStorage.removeItem("userId");
       try {
         window.location.href = "/";
-      } catch (e) {}
+      } catch (e) { }
     }
     return Promise.reject(err);
   }

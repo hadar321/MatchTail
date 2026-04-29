@@ -13,7 +13,7 @@ import { IconSend } from "@tabler/icons-react";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
 
-const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) => {
+const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, senderInfo }) => {
   const [user, setUser] = useState<User>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentUsernames, setCommentUsernames] = useState<Record<string, string>>({});
@@ -23,6 +23,18 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy }) =
   useEffect(() => {
     let mounted = true;
     async function loadUser() {
+      // If we already have senderInfo from populate, use it!
+      if (senderInfo) {
+        setUser({
+          _id: senderInfo._id,
+          username: senderInfo.username,
+          profileImage: senderInfo.profileImage,
+          email: "", // Not needed for display
+          password: "" // Not needed for display
+        });
+        return;
+      }
+
       try {
         const u = await getUserById(userId);
         if (mounted && u) setUser(u);

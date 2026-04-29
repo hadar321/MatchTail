@@ -3,12 +3,23 @@ import type { Post as ClientPost } from "../types/post";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "";
 
-type BackendPost = { _id: string; title: string; content: string; sender: string; postImage?: string; likedBy?: string[] };
+type BackendPost = { 
+  _id: string; 
+  title: string; 
+  content: string; 
+  sender: string | { _id: string; username: string; profileImage?: string }; 
+  postImage?: string; 
+  likedBy?: string[] 
+};
 
 function mapBackend(b: BackendPost): ClientPost {
+  const senderId = typeof b.sender === "string" ? b.sender : b.sender._id;
+  const senderInfo = typeof b.sender === "object" ? b.sender : undefined;
+
   return {
     id: b._id,
-    userId: b.sender,
+    userId: senderId,
+    senderInfo: senderInfo, // Added this to the client post type
     animal: "",
     content: b.content || b.title,
     postImage: b.postImage || "",
@@ -56,4 +67,14 @@ export async function getPostsByUser(sender: string) {
 
 export async function getPostsBySearch(query: string) {
   return getPosts({ search: query });
+}
+
+export async function smartSearch(query: string) {
+  const res = await axios.get<{ answer: string; posts: BackendPost[] }>(`${API_BASE}/posts/smart-search`, {
+    params: { q: query },
+  });
+  return {
+    answer: res.data.answer,
+    posts: res.data.posts.map(mapBackend),
+  };
 }
