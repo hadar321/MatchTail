@@ -121,21 +121,25 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
     }
   };
 
+  const getImageUrl = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http") || url.startsWith("data:")) return url;
+    const cleanBase = API_BASE.endsWith("/") ? API_BASE.slice(0, -1) : API_BASE;
+    const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+    return `${cleanBase}${cleanUrl}`;
+  };
+
   return (
-     !isNil(user) && (
-      <Card shadow="md" padding="0" radius="lg" w="100%" style={{ overflow: 'hidden' }} withBorder>
-        
+    !isNil(user) && (
+      <Card shadow="md" padding="0" radius="lg" w="100%" style={{ overflow: "hidden" }} withBorder>
         <Card.Section inheritPadding py="sm">
-          <PostHeader
-            username={user.username}
-            profileImage={user.profileImage}
-          ></PostHeader>
+          <PostHeader username={user.username} profileImage={getImageUrl(user.profileImage)}></PostHeader>
         </Card.Section>
 
         <Card.Section>
-          <Image 
-            src={postImage ? `${API_BASE}/${postImage}` : image} 
-            height={500} 
+          <Image
+            src={postImage ? getImageUrl(postImage) : image}
+            height={500}
             fit="cover"
             fallbackSrc={image}
           />
