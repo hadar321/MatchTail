@@ -13,8 +13,8 @@ type BackendPost = {
 };
 
 function mapBackend(b: BackendPost): ClientPost {
-  const senderId = typeof b.sender === "string" ? b.sender : b.sender._id;
-  const senderInfo = typeof b.sender === "object" ? b.sender : undefined;
+  const senderId = !b.sender ? "unknown" : (typeof b.sender === "string" ? b.sender : b.sender._id);
+  const senderInfo = (b.sender && typeof b.sender === "object") ? b.sender : undefined;
 
   return {
     id: b._id,
