@@ -102,6 +102,7 @@ const PostsList: React.FC = () => {
             postImage={post.postImage}
             lastUpdated={post.lastUpdated}
             likedBy={post.likedBy}
+            senderInfo={post.senderInfo}
           />
         ))}
         {displayPosts.length === 0 && (

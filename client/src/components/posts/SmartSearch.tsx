@@ -19,10 +19,12 @@ export const SmartSearch = ({ onSearchResults }: SmartSearchProps) => {
     setLoading(true);
     setError(null);
     setAnswer(null);
+    setRelatedPosts([]);
     onSearchResults(null);
     try {
       const data = await smartSearch(query);
       setAnswer(data.answer);
+      setRelatedPosts(data.posts);
       onSearchResults(data.posts);
     } catch (e) {
       console.error(e);
@@ -45,13 +47,14 @@ export const SmartSearch = ({ onSearchResults }: SmartSearchProps) => {
             if (e.key === "Enter") handleSearch();
           }}
         />
-        <Button onClick={handleSearch} disabled={loading}>
+        <Button onClick={handleSearch} loading={loading}>
           חפש
         </Button>
         {answer && (
           <Button color="red" variant="light" onClick={() => {
             setQuery("");
             setAnswer(null);
+            setRelatedPosts([]);
             onSearchResults(null);
           }} disabled={loading}>
             נקה חיפוש
@@ -69,11 +72,24 @@ export const SmartSearch = ({ onSearchResults }: SmartSearchProps) => {
       {error && <Text c="red" size="sm">{error}</Text>}
 
       {answer && (
-        <Stack mt="md">
-          <Card bg="blue.0" radius="md" padding="md">
-            <Text fw={500} mb="xs">תשובת ה-AI:</Text>
-            <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>{answer}</Text>
+        <Stack mt="md" gap="md">
+          <Card bg="blue.0" radius="md" padding="md" withBorder>
+            <Text fw={600} mb="xs" c="blue.9">תשובת ה-AI:</Text>
+            <Text size="sm" style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{answer}</Text>
           </Card>
+
+          {relatedPosts.length > 0 && (
+            <Stack gap="xs">
+              <Text size="xs" fw={700} c="dimmed" tt="uppercase">מקורות המידע ששימשו לתשובה:</Text>
+              <Group gap="xs">
+                {relatedPosts.map((post, idx) => (
+                  <Card key={post.id} padding="xs" radius="xs" withBorder style={{ flex: 1, minWidth: '150px' }}>
+                    <Text size="xs" fw={500} truncate>מקור {idx + 1}: {post.content.substring(0, 30)}...</Text>
+                  </Card>
+                ))}
+              </Group>
+            </Stack>
+          )}
         </Stack>
       )}
     </Card>
