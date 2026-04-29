@@ -32,6 +32,18 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
           email: "", // Not needed for display
           password: "" // Not needed for display
         });
+        
+        // If profileImage is missing from populated data, fetch the full user in the background
+        if (!senderInfo.profileImage) {
+          try {
+            const u = await getUserById(userId);
+            if (mounted && u && u.profileImage) {
+              setUser(prev => prev ? { ...prev, profileImage: u.profileImage } : u);
+            }
+          } catch (e) {
+            console.error("Failed to load full user for profile image", e);
+          }
+        }
         return;
       }
 
@@ -121,9 +133,9 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
   };
 
   return (
-     !isNil(user) && (
+    !isNil(user) && (
       <Card shadow="md" padding="0" radius="lg" w="100%" style={{ overflow: 'hidden' }} withBorder>
-        
+
         <Card.Section inheritPadding py="sm">
           <PostHeader
             username={user.username}
@@ -132,9 +144,9 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
         </Card.Section>
 
         <Card.Section>
-          <Image 
-            src={postImage ? `${API_BASE}/${postImage}` : image} 
-            height={500} 
+          <Image
+            src={postImage ? `${API_BASE}/${postImage}` : image}
+            height={500}
             fit="cover"
             fallbackSrc={image}
           />
@@ -153,18 +165,18 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
 
         <div style={{ padding: '16px' }}>
           {comments.length > 0 && (
-            <Text 
-              fw={700} 
-              size="sm" 
-              mb="xs" 
-              c="dimmed" 
+            <Text
+              fw={700}
+              size="sm"
+              mb="xs"
+              c="dimmed"
               style={{ cursor: "pointer", userSelect: "none" }}
               onClick={() => setShowComments((prev) => !prev)}
             >
               {showComments ? "Hide comments" : `View all ${comments.length} comments`}
             </Text>
           )}
-          
+
           <Collapse in={showComments}>
             <Stack gap="xs" mb="md" mt="sm">
               {comments.map((c) => (
@@ -185,11 +197,11 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
               style={{ flex: 1 }}
               onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
             />
-            <ActionIcon 
-              variant="light" 
-              color="blue" 
-              size="lg" 
-              radius="xl" 
+            <ActionIcon
+              variant="light"
+              color="blue"
+              size="lg"
+              radius="xl"
               onClick={handleAddComment}
               disabled={!newComment.trim()}
             >
