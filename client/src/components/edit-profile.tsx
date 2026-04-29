@@ -22,7 +22,7 @@ const EditProfile: React.FC = () => {
     <Stack justify={"center"} align={"center"} style={{ minHeight: "50vh" }} mt={100}>
       <Card shadow={"sm"} padding="lg" radius="md" w={"24vw"} withBorder>
         <div>
-          <Title order={2} align="center" mb="md">Edit Profile</Title>
+          <Title order={2} ta="center" mb="md">Edit Profile</Title>
           
           <Text mt="md">Username:</Text>
           <TextInput 

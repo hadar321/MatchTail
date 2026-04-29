@@ -56,7 +56,7 @@ const SignUpForm: React.FC = () => {
   return (
     <Container size="sm" mt={80} mb={80}>
       <Card shadow="md" padding="xl" radius="lg" withBorder>
-        <Title order={2} align="center" fw={700} c="blue.7" mb="lg">Create an Account</Title>
+        <Title order={2} ta="center" fw={700} c="blue.7" mb="lg">Create an Account</Title>
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Stack gap="md">
             <Group grow align="flex-start">
@@ -119,7 +119,7 @@ const SignUpForm: React.FC = () => {
             
             <Button type="submit" radius="md" mt="xl" fullWidth>Sign Up</Button>
             
-            <Text c="dimmed" size="sm" align="center" mt="sm">
+            <Text c="dimmed" size="sm" ta="center" mt="sm">
               Already have an account?{" "}
               <Text 
                 component="span" 

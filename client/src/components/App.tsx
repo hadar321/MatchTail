@@ -9,7 +9,7 @@ import { Search } from "./search";
 import { Profile } from "./profile";
 import { CreatePost } from "./create-post";
 import { IconSearch, IconUser, IconLogout, IconPlus, IconImageInPicture } from "@tabler/icons-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { logout } from "../api/auth";
 import { UpdatePost } from "./posts/edit-post";
 import { EditProfile } from "./edit-profile";
@@ -44,7 +44,24 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const isAuthenticatedRoute = ['/postsList', '/search', '/profile', '/createPost'].includes(location.pathname);
+  const isAuthenticatedRoute = ['/postsList', '/search', '/profile', '/createPost', '/edit-post', '/edit-profile'].includes(location.pathname);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const isPublicRoute = ['/', '/signup'].includes(location.pathname);
+
+    if (token) {
+      // If user is logged in and tries to go to login/signup, redirect to posts
+      if (isPublicRoute) {
+        navigate('/postsList');
+      }
+    } else {
+      // If user is NOT logged in and tries to access protected route, redirect to login
+      if (isAuthenticatedRoute) {
+        navigate('/');
+      }
+    }
+  }, [location.pathname, navigate, isAuthenticatedRoute]);
 
   return (
     <div style={backgroundStyle}>
