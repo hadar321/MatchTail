@@ -1,4 +1,4 @@
-import { Card, Flex, Image, Text, TextInput, Button, Group, Divider, Avatar, Stack, ActionIcon, Collapse } from "@mantine/core";
+import { Card, Flex, Image, Text, TextInput, Group, Divider, Stack, ActionIcon, Collapse } from "@mantine/core";
 import { PostHeader } from "./post-header";
 import { Post as PostType } from "../../types/post";
 import { getUserById } from "../../services/user-service";
@@ -28,9 +28,10 @@ const Post: React.FC<PostType> = ({ id, userId, postImage, content, likedBy, sen
         setUser({
           _id: senderInfo._id,
           username: senderInfo.username,
-          profileImage: senderInfo.profileImage,
-          email: "", // Not needed for display
-          password: "" // Not needed for display
+          profileImage: senderInfo.profileImage || "",
+          email: "", 
+          password: "",
+          lastUpdate: new Date()
         });
         return;
       }

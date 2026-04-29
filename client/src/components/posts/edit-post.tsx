@@ -1,4 +1,4 @@
-import { Stack, Button, TextInput, Card, Title, FileInput, Text, Textarea, Group } from "@mantine/core";
+import { Stack, Button, Card, Title, FileInput, Text, Textarea, Group } from "@mantine/core";
 import { useState } from "react";
 import { updatePost } from "../../api/posts";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const UpdatePost: React.FC = () => {
   const location = useLocation();
   const { id, postImage, content } = (location.state as PostType) || {};
 
-  const [title, setTitle] = useState("");
+  const [title] = useState("");
   const [postImageFile, setPostImage] = useState<File | null>(postImage ? new File([], postImage) : null);
   const [postContent, setContent] = useState(content || "");
 
@@ -21,7 +21,7 @@ const UpdatePost: React.FC = () => {
     <Stack justify={"center"} align={"center"} style={{ minHeight: "80vh", padding: "2rem" }}>
       <Card shadow="md" padding="xl" radius="lg" w={{ base: '90vw', sm: '28vw' }} withBorder>
         <Stack gap="md">
-          <Title order={2} align="center" mb="sm" fw={700} c="blue.7">Update Post</Title>
+          <Title order={2} ta="center" mb="sm" fw={700} c="blue.7">Update Post</Title>
           
           <div>
             <Text fw={500} size="sm" mb={4}>Post Content</Text>
